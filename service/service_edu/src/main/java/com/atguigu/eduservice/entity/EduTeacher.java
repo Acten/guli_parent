@@ -1,4 +1,4 @@
-package com.atguigu.demo.eduservice.entity;
+package com.atguigu.eduservice.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
