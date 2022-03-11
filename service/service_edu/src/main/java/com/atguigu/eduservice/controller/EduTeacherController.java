@@ -56,11 +56,11 @@ public class EduTeacherController {
     public R pageListTeacher(@ApiParam(name = "current",value = "当前页",required = true)@PathVariable long current,
                              @ApiParam(name = "limit",value = "每页记录数",required = true)@PathVariable long limit){
         Page<EduTeacher> pageTeacher = new Page<>(current, limit);
-        try{
+        /*try{
             int i = 10/0;
         }catch(Exception e){
             throw new GuliException(20001,"执行了自定义异常处理");
-        }
+        }*/
         eduTeacherService.page(pageTeacher,null);
         long total = pageTeacher.getTotal();
         List<EduTeacher> records = pageTeacher.getRecords();
