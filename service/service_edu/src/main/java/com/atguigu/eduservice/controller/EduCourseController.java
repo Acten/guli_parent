@@ -28,8 +28,8 @@ public class EduCourseController {
     @ApiOperation("添加课程基本信息和简介信息")
     @PostMapping("addCourseInfo")
     public R addCourseInfo(@RequestBody CourseInfoVo courseInfoVo){
-        courseService.saveCourseInfo(courseInfoVo);
-        return R.ok();
+       String id = courseService.saveCourseInfo(courseInfoVo);
+        return R.ok().data("courseId",id);
     }
 }
 
