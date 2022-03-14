@@ -25,7 +25,7 @@ public class EduCourseController {
     @Autowired
     private EduCourseService courseService;
 
-    @ApiOperation("添加课程基本信息和简介信息")
+    @ApiOperation(value = "添加课程基本信息和简介信息")
     @PostMapping("addCourseInfo")
     public R addCourseInfo(@RequestBody CourseInfoVo courseInfoVo){
        String id = courseService.saveCourseInfo(courseInfoVo);
