@@ -21,7 +21,7 @@ import java.util.List;
  * @author heqi
  * @since 2022-03-12
  */
-@Api(description = "课程管理")
+@Api(description = "课程分类管理")
 @RestController
 @RequestMapping("/eduservice/subject")
 @CrossOrigin
@@ -29,7 +29,7 @@ public class EduSubjectController {
     @Autowired
     private EduSubjectService subjectService;
 
-    @ApiOperation(value = "添加课程")
+    @ApiOperation(value = "添加课程分类")
     @PostMapping("addSubject")
     public R addSubject(MultipartFile file){
         subjectService.saveSubject(file,subjectService);
