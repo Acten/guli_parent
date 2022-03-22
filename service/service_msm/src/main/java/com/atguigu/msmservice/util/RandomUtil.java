@@ -1,4 +1,4 @@
-package com.atguigu.msmservice.utils;
+package com.atguigu.msmservice.util;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
