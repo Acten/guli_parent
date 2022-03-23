@@ -11,14 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * <p>
- * 会员表 前端控制器
- * </p>
- *
- * @author heqi
- * @since 2022-03-22
- */
 @RestController
 @RequestMapping("/educenter/member")
 @CrossOrigin

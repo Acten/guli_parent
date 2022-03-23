@@ -33,18 +33,9 @@ public class MsmController {
         }
         //2 如果redis获取 不到，进行阿里云发送
         //生成随机值，传递阿里云进行发送
-        code = RandomUtil.getFourBitRandom();
-        Map<String,Object> param = new HashMap<>();
-        param.put("code",code);
         //调用service发送短信的方法
-        boolean isSend = msmService.send(param,phone);
-        if(isSend) {
-            //发送成功，把发送成功验证码放到redis里面
-            //设置有效时间
-            redisTemplate.opsForValue().set(phone,code,5, TimeUnit.MINUTES);
+        code = msmService.send(phone);
+        redisTemplate.opsForValue().set(phone,code,5, TimeUnit.MINUTES);
             return R.ok();
-        } else {
-            return R.error().message("短信发送失败");
         }
-    }
 }

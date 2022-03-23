@@ -1,53 +1,72 @@
 package com.atguigu.msmservice.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.aliyuncs.CommonRequest;
-import com.aliyuncs.CommonResponse;
-import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.IAcsClient;
-import com.aliyuncs.http.MethodType;
-import com.aliyuncs.profile.DefaultProfile;
 import com.atguigu.msmservice.service.MsmService;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.PostMethod;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
+import com.atguigu.msmservice.util.StringUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Map;
-
 @Service
 public class MsmServiceImpl implements MsmService {
 
-    //发送短信的方法
+    private static String Url = "http://106.ihuyi.cn/webservice/sms.php?method=Submit";
     @Override
-    public boolean send(Map<String, Object> param, String phone) {
-        if(StringUtils.isEmpty(phone)) return false;
+    public String send(String phone) {
 
-        DefaultProfile profile =
-                DefaultProfile.getProfile("default", "LTAI4FvvVEWiTJ3GNJJqJnk7", "9st82dv7EvFk9mTjYO1XXbM632fRbG");
-        IAcsClient client = new DefaultAcsClient(profile);
+        HttpClient client = new HttpClient();
+        PostMethod method = new PostMethod(Url);
 
-        //设置相关固定的参数
-        CommonRequest request = new CommonRequest();
-        //request.setProtocol(ProtocolType.HTTPS);
-        request.setMethod(MethodType.POST);
-        request.setDomain("dysmsapi.aliyuncs.com");
-        request.setVersion("2017-05-25");
-        request.setAction("SendSms");
+        client.getParams().setContentCharset("UTF-8");
+        method.setRequestHeader("ContentType","application/x-www-form-urlencoded;charset=UTF-8");
 
-        //设置发送相关的参数
-        request.putQueryParameter("PhoneNumbers",phone); //手机号
-        request.putQueryParameter("SignName","我的谷粒在线教育网站"); //申请阿里云 签名名称
-        request.putQueryParameter("TemplateCode","SMS_180051135"); //申请阿里云 模板code
-        request.putQueryParameter("TemplateParam", JSONObject.toJSONString(param)); //验证码数据，转换json数据传递
+        int mobile_code = (int)((Math.random()*9+1)*100000);
+
+        String content = new String("您的验证码是：" + mobile_code + "。请不要把验证码泄露给其他人。");
+
+        NameValuePair[] data = {//提交短信
+                new NameValuePair("account", "C45303717"), //查看用户名是登录用户中心->验证码短信->产品总览->APIID
+                new NameValuePair("password", "e58d0387a17081a64191cdea6efaed14"),  //查看密码请登录用户中心->验证码短信->产品总览->APIKEY
+                //new NameValuePair("password", util.StringUtil.MD5Encode("密码")),
+                new NameValuePair("mobile", phone),
+                new NameValuePair("content", content),
+        };
+        method.setRequestBody(data);
 
         try {
-            //最终发送
-            CommonResponse response = client.getCommonResponse(request);
-            boolean success = response.getHttpResponse().isSuccess();
-            return success;
-        }catch(Exception e) {
+            client.executeMethod(method);
+
+            String SubmitResult =method.getResponseBodyAsString();
+
+            //System.out.println(SubmitResult);
+
+            Document doc = DocumentHelper.parseText(SubmitResult);
+            Element root = doc.getRootElement();
+
+            String code = root.elementText("code");
+            String msg = root.elementText("msg");
+            String smsid = root.elementText("smsid");
+
+            System.out.println(code);
+            System.out.println(msg);
+            System.out.println(smsid);
+
+            if("2".equals(code)){
+                System.out.println("短信提交成功");
+            }
+            return String.valueOf(mobile_code);
+        } catch(Exception e) {
             e.printStackTrace();
-            return false;
+            return "发送失败";
         }
 
     }
+
 }
