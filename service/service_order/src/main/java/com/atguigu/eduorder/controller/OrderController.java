@@ -27,9 +27,12 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    //1 生成订单的方法
     @PostMapping("createOrder/{courseId}")
-    public R saveOrder(@PathVariable String courseId, HttpServletRequest request){
-        String orderNo = orderService.createOrders(courseId, JwtUtils.getMemberIdByJwtToken(request));
+    public R saveOrder(@PathVariable String courseId, HttpServletRequest request) {
+        //创建订单，返回订单号
+        String orderNo =
+                orderService.createOrders(courseId,JwtUtils.getMemberIdByJwtToken(request));
         return R.ok().data("orderId",orderNo);
     }
 
@@ -40,6 +43,18 @@ public class OrderController {
         wrapper.eq("order_no",orderId);
         Order order = orderService.getOne(wrapper);
         return R.ok().data("item",order);
+    }
+
+    //根据课程id和用户id查询订单表中订单状态
+    @GetMapping("isBuyCourse/{courseId}/{memberId}")
+    public boolean isBuyCourse(@PathVariable String courseId,@PathVariable String memberId) {
+        QueryWrapper<Order> wrapper = new QueryWrapper<>();
+        wrapper.eq("course_id",courseId);
+        wrapper.eq("member_id",memberId);
+        wrapper.eq("status",1);//支付状态 1代表已经支付
+        int count = orderService.count(wrapper);
+        //已经支付
+        return count > 0;
     }
 }
 
